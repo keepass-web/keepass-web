@@ -1,0 +1,6 @@
+{
+  "template": "src/index.html",
+  "styles": ["src/index.css"],
+  "scripts": [],
+  "output": "dist/index.html"
+}
