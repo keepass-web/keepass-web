@@ -1,0 +1,20 @@
+{
+  "name": "@keepass-web/app",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "KeePass Web — a single-file, self-contained KDBX password manager for the browser.",
+  "license": "MIT",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "test": "node --experimental-strip-types --test 'tests/**/*.test.ts'",
+    "build": "node --experimental-strip-types .build/inliner/src/index.ts build.json"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.0",
+    "@types/node": "^22.20.0",
+    "typescript": "6.0.3"
+  }
+}
