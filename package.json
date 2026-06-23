@@ -10,7 +10,7 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "test": "node --experimental-strip-types --test 'tests/**/*.test.ts'",
-    "build": "node --experimental-strip-types .build/inliner/src/index.ts build.json"
+    "build": "node --experimental-strip-types .build/inliner/src/index.ts build.json && node --experimental-strip-types .build/inliner/src/index.ts build-router.json"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.0",
