@@ -1,6 +1,6 @@
 {
   "name": "@keepass-web/app",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "description": "KeePass Web — a single-file, self-contained KDBX password manager for the browser.",
