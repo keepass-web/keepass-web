@@ -19,7 +19,9 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # create release and upload assets
+      contents: write      # create release and upload assets
+      id-token: write      # request OIDC token for attestation signing
+      attestations: write  # write attestation to repo
     steps:
       - name: Check out source
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7
@@ -68,6 +70,13 @@ jobs:
           echo "checksum_router=${checksum_router}" >> "$GITHUB_OUTPUT"
           printf '### Distributable checksums\n| File | SHA-256 |\n|------|---------|\n| `keepassweb-0x67.html` | `%s` |\n| `keepassweb.html` | `%s` |\n' \
             "${checksum_0x67}" "${checksum_router}" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Attest distributables
+        uses: actions/attest-build-provenance@96b4a1ef7235a096b17240c259729fdd70c83d45  # v2
+        with:
+          subject-path: |
+            dist/keepassweb-0x67.html
+            dist/keepassweb.html
 
       - name: Create GitHub release
         env:
