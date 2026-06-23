@@ -83,3 +83,19 @@ jobs:
             --notes "${notes}" \
             dist/keepassweb-0x67.html \
             dist/keepassweb.html
+
+      - name: Generate deploy token
+        id: deploy-token
+        uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547  # v1
+        with:
+          app-id: ${{ secrets.DEPLOY_BOT_APP_ID }}
+          private-key: ${{ secrets.DEPLOY_BOT_APP_PRIVATE_KEY }}
+          repositories: keepass-web.github.io
+
+      - name: Trigger deploy workflow
+        env:
+          GH_TOKEN: ${{ steps.deploy-token.outputs.token }}
+        run: |
+          gh workflow run deploy.yml \
+            --repo keepass-web/keepass-web.github.io \
+            --field release-tag="$GITHUB_REF_NAME"
