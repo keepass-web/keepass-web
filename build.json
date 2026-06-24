@@ -1,6 +1,0 @@
-{
-  "template": "src/index.html",
-  "styles": ["src/index.css"],
-  "scripts": [],
-  "output": "dist/keepassweb-0x67.html"
-}

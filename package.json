@@ -10,7 +10,7 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "test": "node --experimental-strip-types --test 'tests/**/*.test.ts'",
-    "build": "node --experimental-strip-types .build/inliner/src/index.ts build.json && node --experimental-strip-types .build/inliner/src/index.ts build-router.json"
+    "build": "node --experimental-strip-types .build/inliner/src/index.ts src/keepass-web-0x67/build.json && node --experimental-strip-types .build/inliner/src/index.ts src/keepass-web-router/build.json && node --experimental-strip-types .build/inliner/src/index.ts src/index/build.json"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.0",

@@ -59,24 +59,30 @@ jobs:
             exit 1
           fi
 
-      # Build each distributable separately to capture individual checksums.
-      # The inliner prints sha256:<hex> to stdout.
+      # The inliner prints sha256:<hex> to stdout for each built file.
+      # CNAME is copied verbatim; its checksum is surfaced in the step summary.
       - name: Build distributables
-        id: build
         run: |
-          checksum_0x67=$(node --experimental-strip-types .build/inliner/src/index.ts build.json)
-          checksum_router=$(node --experimental-strip-types .build/inliner/src/index.ts build-router.json)
-          echo "checksum_0x67=${checksum_0x67}" >> "$GITHUB_OUTPUT"
-          echo "checksum_router=${checksum_router}" >> "$GITHUB_OUTPUT"
-          printf '### Distributable checksums\n| File | SHA-256 |\n|------|---------|\n| `keepassweb-0x67.html` | `%s` |\n| `keepassweb.html` | `%s` |\n' \
-            "${checksum_0x67}" "${checksum_router}" >> "$GITHUB_STEP_SUMMARY"
+          mkdir -p dist
+          cp CNAME dist/CNAME
+
+          printf '### Distributable checksums\n| File | SHA-256 |\n|------|---------|\n' >> "$GITHUB_STEP_SUMMARY"
+
+          for page in index keepass-web-router keepass-web-0x67; do
+            checksum=$(node --experimental-strip-types .build/inliner/src/index.ts "src/${page}/build.json")
+            printf '| `%s.html` | `%s` |\n' "${page}" "${checksum}" >> "$GITHUB_STEP_SUMMARY"
+          done
+
+          printf '| `CNAME` | `sha256:%s` |\n' "$(sha256sum dist/CNAME | awk '{print $1}')" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Attest distributables
         uses: actions/attest-build-provenance@96b4a1ef7235a096b17240c259729fdd70c83d45  # v2
         with:
           subject-path: |
-            dist/keepassweb-0x67.html
-            dist/keepassweb.html
+            dist/keepass-web-0x67.html
+            dist/keepass-web-router.html
+            dist/index.html
+            dist/CNAME
 
       - name: Create GitHub release
         env:
@@ -85,13 +91,16 @@ jobs:
           notes="### Distributable checksums"$'\n'
           notes+="| File | SHA-256 |"$'\n'
           notes+="|------|---------|"$'\n'
-          notes+="| \`keepassweb-0x67.html\` | \`${{ steps.build.outputs.checksum_0x67 }}\` |"$'\n'
-          notes+="| \`keepassweb.html\` | \`${{ steps.build.outputs.checksum_router }}\` |"
+          for file in dist/index.html dist/keepass-web-router.html dist/keepass-web-0x67.html dist/CNAME; do
+            notes+="| \`$(basename "${file}")\` | \`sha256:$(sha256sum "${file}" | awk '{print $1}')\` |"$'\n'
+          done
           gh release create "$GITHUB_REF_NAME" \
             --title "$GITHUB_REF_NAME" \
             --notes "${notes}" \
-            dist/keepassweb-0x67.html \
-            dist/keepassweb.html
+            dist/keepass-web-0x67.html \
+            dist/keepass-web-router.html \
+            dist/index.html \
+            dist/CNAME
 
       - name: Generate deploy token
         id: deploy-token

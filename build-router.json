@@ -1,6 +1,0 @@
-{
-  "template": "src/router.html",
-  "styles": ["src/index.css"],
-  "scripts": [],
-  "output": "dist/keepassweb.html"
-}
